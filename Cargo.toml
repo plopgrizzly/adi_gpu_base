@@ -1,0 +1,8 @@
+[package]
+name = "adi_gpu_base"
+version = "0.1.0"
+authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.com>"]
+
+[dependencies]
+afi = "^0.3.1"
+ami = { path = "../ami" }
