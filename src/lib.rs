@@ -9,18 +9,32 @@
 
 extern crate afi;
 extern crate ami;
+extern crate awi;
 
 use afi::*;
-use ami::*;
+use ami::Mat4;
+
+pub trait BaseTypes {
+	type Gradient;
+	type Texture;
+	type TexCoords;
+	type Model;
+	type Shape;
+}
 
 /// A trait for a `Display`
-pub trait Display where Self: Sized {
+pub trait Display: Sized {
+	type Model;
+	type Texture;
+	type Gradient;
+	type TexCoords;
+	type Shape;
+
 	/// Create a new GPU-Accelerated `Display`.  If it can't be created,
 	/// return None.
 	///
-	/// * `name`: If `Display` is a window, the window title.
-	/// * `graphic`: If `Display` is a window, the window icon.
-	fn new(name: &str, graphic: Graphic) -> Option<Self>;
+	/// * `window`: The window to make a GPU-Accelerated `Display`.
+	fn new(window: &awi::Window) -> Option<Self>;
 
 	/// Set the background color for the `Display`.
 	///
@@ -44,93 +58,83 @@ pub trait Display where Self: Sized {
 		rotation: (f32, f32, f32)) -> ();
 
 	/// Create a new `Model` for this `Display`.
-	fn model<M>(&mut self, vertices: &[f32], indices: &[u32])
-		-> M where M: Model;
+	fn model(&mut self, vertices: &[f32], indices: &[u32]) -> Self::Model;
 
 	/// Create a new `Texture` for this `Display`.
-	fn texture<X>(&mut self, graphic: Graphic) -> X where X: Texture;
+	fn texture(&mut self, graphic: Graphic) -> Self::Texture;
 
 	/// Create a new `Gradient` for this `Display`.
-	fn gradient<G>(&mut self, colors: &[f32]) -> G where G: Gradient;
+	fn gradient(&mut self, colors: &[f32]) -> Self::Gradient;
 
 	/// Create new `TexCoords` for this `Display`.
-	fn texcoords<C>(&mut self, texcoords: &[f32]) -> C where C: TexCoords;
-}
+	fn texcoords(&mut self, texcoords: &[f32]) -> Self::TexCoords;
 
-/// Trait for a `Texture`.
-pub trait Texture {
-	/// Set the pixels for this `Texture`.
-	fn set<D>(&mut self, display: D, pixels: &[u32]) -> () where D: Display;
+	/// Set the pixels for a `Texture`.
+	fn set_texture(&mut self, texture: &mut Self::Texture, pixels: &[u32])
+		-> ();
 
-	/// Get the width and height of this `Texture`.
-	fn wh(&self) -> (u32, u32);
-}
-
-/*impl Texture {
-	/// Create a new empty texture for this `Display`.
-	pub fn empty(display: Display, wh: (u32, u32)) -> Self {
-		let graphic = GraphicBuilder::new()
-			.rgba(wh.0, wh.1, vec![0; wh.0 * wh.1]);
-
-		display.texture(graphic)
-	}
-}*/
-
-/// Trait for `Model`
-pub trait Model {
 	/// Create a new shape with a solid color.
-	fn to_solid_shape<T, D, X>(&self, display: &mut D, transform: Mat4,
-		color: [f32; 4],
-		blending: bool, fancy: bool, fog: bool, camera: bool) -> T
-		where T: Shape, D: Display;
+	fn shape_solid(&mut self, model: &Self::Model, transform: Mat4,
+		color: [f32; 4], blending: bool, fancy: bool, fog: bool,
+		camera: bool) -> Self::Shape;
 
 	/// Create a new shape shaded by a gradient (1 color per vertex).
-	fn to_gradient_shape<T, D, X>(&self, display: &mut D, transform: Mat4,
-		gradient: Gradient,
-		blending: bool, fancy: bool, fog: bool, camera: bool) -> T
-		where T: Shape, D: Display;
+	fn shape_gradient(&mut self, model: &Self::Model, transform: Mat4,
+		gradient: Self::Gradient, blending: bool, fancy: bool,
+		fog: bool, camera: bool) -> Self::Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn to_texture_shape<T, D, X>(&self, display: &mut D, transform: Mat4,
-		texture: X, tc: TexCoords,
-		blending: bool, fancy: bool, fog: bool, camera: bool) -> T
-		where T: Shape, D: Display;
+	fn shape_texture(&mut self, model: &Self::Model, transform: Mat4,
+		texture: Self::Texture, tc: Self::TexCoords, blending: bool,
+		fancy: bool, fog: bool, camera: bool) -> Self::Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and alpha.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn to_faded_shape<T, D, X>(&self, display: &mut D, transform: Mat4,
-		texture: X, tc: TexCoords,
-		alpha: f32, fancy: bool, fog: bool, camera: bool) -> T
-		where T: Shape, D: Display;
+	fn shape_faded(&mut self, model: &Self::Model, transform: Mat4,
+		texture: Self::Texture, tc: Self::TexCoords, alpha: f32,
+		fancy: bool, fog: bool, camera: bool) -> Self::Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and tint.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn to_tinted_shape<T, D, X>(&self, display: &mut D, transform: Mat4,
-		texture: X, tc: TexCoords, tint: [f32; 4],
-		blending: bool, fancy: bool, fog: bool, camera: bool) -> T
-		where T: Shape, D: Display;
+	fn shape_tinted(&mut self, model: &Self::Model, transform: Mat4,
+		texture: Self::Texture, tc: Self::TexCoords, tint: [f32; 4],
+		blending: bool, fancy: bool, fog: bool, camera: bool)
+		-> Self::Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and tint per vertex.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn to_complex_shape<T, D, X>(&self, display: &mut D, transform: Mat4,
-		texture: X, tc: TexCoords, gradient: Gradient,
-		blending: bool, fancy: bool, fog: bool, camera: bool) -> T
-		where T: Shape, D: Display;
+	fn shape_complex(&mut self, model: &Self::Model, transform: Mat4,
+		texture: Self::Texture, tc: Self::TexCoords,
+		gradient: Self::Gradient, blending: bool, fancy: bool,
+		fog: bool, camera: bool) -> Self::Shape;
+
+	/// Transform the shape.
+	fn transform(&mut self, shape: &mut Self::Shape, transform: &Mat4);
+
+	/// Resize the display.
+	fn resize(&mut self, wh: (u32, u32)) -> ();
+}
+
+/// Trait for a `Texture`.
+pub trait Texture {
+	/// Get the width and height of this `Texture`.
+	fn wh(&self) -> (u32, u32);
+}
+
+/// Trait for `Model`
+pub trait Model {
 }
 
 /// Trait for `Shape`
 pub trait Shape {
-	/// Transform the shape.
-	fn transform<T>(&mut self, display: &mut T, transform: &Mat4)
-		where T: Display;
 }
 
 /// Trait for `Gradient`

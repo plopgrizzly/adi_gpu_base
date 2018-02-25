@@ -1,3 +1,20 @@
+# Aldaron's Device Interface / GPU / Base                                      #
+# Copyright (c) 2018 Jeron Aldaron Lau <jeron.lau@plopgrizzly.com>             #
+# Licensed under the MIT LICENSE                                               #
+#                             _        _                                       #
+#                            /@\——————/@\                                      #
+# .———  .                   |   o    o   |     .————      .            .       #
+# |   | |  .———   .———   .——.     []     .——.  |      .——    ———: ———: | .   . #
+# |   | |  |   |  |   |  \   \   <##>   /   /  |      |   |    /    /  | |   | #
+# |———  |  |   |  |   |   |   ¯        ¯   |   |   -- |   |   /    /   |  \ /  #
+# |     |  |   |  |———    |                |   |    | |   |  /    /    |   |   #
+# |     |   ———   |       |                |    ————  |   | :——— :———  |   |   #
+#                 |        \              /                              __/   #
+#                           ¯————————————¯                                     #
+# Cargo.toml                                                                   #
+
+################################################################################
+
 [package]
 name = "adi_gpu_base"
 version = "0.1.0"
@@ -5,4 +22,5 @@ authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.com>"]
 
 [dependencies]
 afi = "^0.3.1"
-ami = { path = "../ami" }
+ami = "^0.6"
+awi = "^0.2"
