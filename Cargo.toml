@@ -18,9 +18,39 @@
 [package]
 name = "adi_gpu_base"
 version = "0.1.0"
-authors = ["Jeron Aldaron Lau <jeron.lau@plopgrizzly.com>"]
+authors = [
+	"Jeron Aldaron Lau <jeron.lau@plopgrizzly.com>"
+]
+
+################################################################################
+
+license = "MIT"
+documentation = "https://docs.rs/adi_gpu_base"
+homepage = "http://plopgrizzly.com/adi_gpu_base"
+repository = "https://github.com/plopgrizzly/adi_gpu_base"
+
+################################################################################
+
+readme = "README.md"
+description = """
+    Aldaron's Device Interface / GPU / Base provides the base traits for
+    implementations of the adi_gpu api.
+"""
+keywords = ["graphics", "traits", "base"]
+categories = ["hardware-support", "rendering", "template-engine"]
+
+################################################################################
+
+exclude = [
+	"examples/*", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", ".gitignore",
+	"_config.yml", "ISSUE_TEMPLATE.md", "icon.png", "icon.ico"
+]
+
+################################################################################
 
 [dependencies]
 afi = "^0.3.1"
 ami = "^0.6"
 awi = "^0.2"
+
+################################################################################
