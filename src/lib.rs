@@ -14,27 +14,16 @@ extern crate awi;
 use afi::*;
 use ami::Mat4;
 
-pub trait BaseTypes {
-	type Gradient;
-	type Texture;
-	type TexCoords;
-	type Model;
-	type Shape;
-}
-
 /// A trait for a `Display`
 pub trait Display: Sized {
-	type Model;
 	type Texture;
-	type Gradient;
-	type TexCoords;
-	type Shape;
 
 	/// Create a new GPU-Accelerated `Display`.  If it can't be created,
 	/// return None.
 	///
-	/// * `window`: The window to make a GPU-Accelerated `Display`.
-	fn new(window: &awi::Window) -> Option<Self>;
+	/// * `title`: The window title.
+	/// * `icon`: The window icon.
+	fn new(title: &str, icon: &afi::Graphic) -> Option<Self>;
 
 	/// Set the background color for the `Display`.
 	///
@@ -58,69 +47,74 @@ pub trait Display: Sized {
 		rotation: (f32, f32, f32)) -> ();
 
 	/// Create a new `Model` for this `Display`.
-	fn model(&mut self, vertices: &[f32], indices: &[u32]) -> Self::Model;
+	fn model(&mut self, vertices: &[f32], indices: &[u32]) -> Model;
 
 	/// Create a new `Texture` for this `Display`.
 	fn texture(&mut self, graphic: Graphic) -> Self::Texture;
 
 	/// Create a new `Gradient` for this `Display`.
-	fn gradient(&mut self, colors: &[f32]) -> Self::Gradient;
+	fn gradient(&mut self, colors: &[f32]) -> Gradient;
 
 	/// Create new `TexCoords` for this `Display`.
-	fn texcoords(&mut self, texcoords: &[f32]) -> Self::TexCoords;
+	fn texcoords(&mut self, texcoords: &[f32]) -> TexCoords;
 
 	/// Set the pixels for a `Texture`.
 	fn set_texture(&mut self, texture: &mut Self::Texture, pixels: &[u32])
 		-> ();
 
 	/// Create a new shape with a solid color.
-	fn shape_solid(&mut self, model: &Self::Model, transform: Mat4,
+	fn shape_solid(&mut self, model: &Model, transform: Mat4,
 		color: [f32; 4], blending: bool, fancy: bool, fog: bool,
-		camera: bool) -> Self::Shape;
+		camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a gradient (1 color per vertex).
-	fn shape_gradient(&mut self, model: &Self::Model, transform: Mat4,
-		gradient: Self::Gradient, blending: bool, fancy: bool,
-		fog: bool, camera: bool) -> Self::Shape;
+	fn shape_gradient(&mut self, model: &Model, transform: Mat4,
+		gradient: Gradient, blending: bool, fancy: bool,
+		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn shape_texture(&mut self, model: &Self::Model, transform: Mat4,
-		texture: Self::Texture, tc: Self::TexCoords, blending: bool,
-		fancy: bool, fog: bool, camera: bool) -> Self::Shape;
+	fn shape_texture(&mut self, model: &Model, transform: Mat4,
+		texture: Self::Texture, tc: TexCoords, blending: bool,
+		fancy: bool, fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and alpha.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn shape_faded(&mut self, model: &Self::Model, transform: Mat4,
-		texture: Self::Texture, tc: Self::TexCoords, alpha: f32,
-		fancy: bool, fog: bool, camera: bool) -> Self::Shape;
+	fn shape_faded(&mut self, model: &Model, transform: Mat4,
+		texture: Self::Texture, tc: TexCoords, alpha: f32,
+		fancy: bool, fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and tint.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn shape_tinted(&mut self, model: &Self::Model, transform: Mat4,
-		texture: Self::Texture, tc: Self::TexCoords, tint: [f32; 4],
-		blending: bool, fancy: bool, fog: bool, camera: bool)
-		-> Self::Shape;
+	fn shape_tinted(&mut self, model: &Model, transform: Mat4,
+		texture: Self::Texture, tc: TexCoords, tint: [f32; 4],
+		blending: bool, fancy: bool, fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and tint per vertex.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
-	fn shape_complex(&mut self, model: &Self::Model, transform: Mat4,
-		texture: Self::Texture, tc: Self::TexCoords,
-		gradient: Self::Gradient, blending: bool, fancy: bool,
-		fog: bool, camera: bool) -> Self::Shape;
+	fn shape_complex(&mut self, model: &Model, transform: Mat4,
+		texture: Self::Texture, tc: TexCoords,
+		gradient: Gradient, blending: bool, fancy: bool,
+		fog: bool, camera: bool) -> Shape;
 
 	/// Transform the shape.
-	fn transform(&mut self, shape: &mut Self::Shape, transform: &Mat4);
+	fn transform(&mut self, shape: &mut Shape, transform: &Mat4);
 
 	/// Resize the display.
 	fn resize(&mut self, wh: (u32, u32)) -> ();
+
+	/// Get the width and height of the window, as a tuple.
+	fn wh(&self) -> (u32, u32);
+
+	/// Get input, if there's any.
+	fn input(&mut self) -> Option<awi::Input>;
 }
 
 /// Trait for a `Texture`.
@@ -129,18 +123,48 @@ pub trait Texture {
 	fn wh(&self) -> (u32, u32);
 }
 
-/// Trait for `Model`
-pub trait Model {
+/// Handle for shape.
+#[derive(Clone)]
+pub enum ShapeHandle {
+	Alpha(u32),
+	Opaque(u32),
+	Gui(u32),
 }
 
-/// Trait for `Shape`
-pub trait Shape {
+/// A renderable object that exists on the `Display`.
+pub struct Shape(ShapeHandle);
+
+/// A list of vertices that make a shape.
+#[derive(Copy, Clone)]
+pub struct Model(pub usize); // TODO: unsafe
+
+/// A list of colors to be paired with vertices.
+#[derive(Copy, Clone)]
+pub struct Gradient(pub usize); // TODO: unsafe
+
+/// A list of texture coordinates to be paired with vertices.
+#[derive(Copy, Clone)]
+pub struct TexCoords(pub usize); // TODO: unsafe
+
+/// Create a new shape
+pub fn new_shape(i: ShapeHandle) -> Shape {
+	Shape(i)
 }
 
-/// Trait for `Gradient`
-pub trait Gradient {
+/// Get the index of a shape
+pub fn get_shape(s: &Shape) -> ShapeHandle {
+	s.0.clone()
 }
 
-/// Trait for `TexCoords`
-pub trait TexCoords {
+/// Generate a projection matrix.
+pub fn projection(ratio: f32, fov: f32) -> Mat4 {
+	let scale = (fov * 0.5 * ::std::f32::consts::PI / 180.).tan().recip();
+	let yscale = scale * ratio;
+
+	Mat4([
+		scale,	0.,	0.,	0.,
+		0.,	yscale,	0.,	0.,
+		0.,	0.,	1.,	1.,
+		0.,	0.,	0., 	1.,
+	])
 }
