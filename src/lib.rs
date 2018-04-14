@@ -65,20 +65,20 @@ pub trait Display: Sized {
 
 	/// Create a new shape with a solid color.
 	fn shape_solid(&mut self, model: &Model, transform: Mat4,
-		color: [f32; 4], blending: bool, fancy: bool, fog: bool,
-		camera: bool) -> Shape;
+		color: [f32; 4], blending: bool, fog: bool, camera: bool)
+		-> Shape;
 
 	/// Create a new shape shaded by a gradient (1 color per vertex).
 	fn shape_gradient(&mut self, model: &Model, transform: Mat4,
-		gradient: Gradient, blending: bool, fancy: bool,
-		fog: bool, camera: bool) -> Shape;
+		gradient: Gradient, blending: bool, fog: bool, camera: bool)
+		-> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates.
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_texture(&mut self, model: &Model, transform: Mat4,
 		texture: Self::Texture, tc: TexCoords, blending: bool,
-		fancy: bool, fog: bool, camera: bool) -> Shape;
+		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and alpha.
@@ -86,7 +86,7 @@ pub trait Display: Sized {
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_faded(&mut self, model: &Model, transform: Mat4,
 		texture: Self::Texture, tc: TexCoords, alpha: f32,
-		fancy: bool, fog: bool, camera: bool) -> Shape;
+		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and tint.
@@ -94,7 +94,7 @@ pub trait Display: Sized {
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_tinted(&mut self, model: &Model, transform: Mat4,
 		texture: Self::Texture, tc: TexCoords, tint: [f32; 4],
-		blending: bool, fancy: bool, fog: bool, camera: bool) -> Shape;
+		blending: bool, fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
 	/// and tint per vertex.
@@ -102,11 +102,11 @@ pub trait Display: Sized {
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_complex(&mut self, model: &Model, transform: Mat4,
 		texture: Self::Texture, tc: TexCoords,
-		gradient: Gradient, blending: bool, fancy: bool,
+		gradient: Gradient, blending: bool,
 		fog: bool, camera: bool) -> Shape;
 
 	/// Transform the shape.
-	fn transform(&mut self, shape: &mut Shape, transform: &Mat4);
+	fn transform(&mut self, shape: &mut Shape, transform: Mat4);
 
 	/// Resize the display.
 	fn resize(&mut self, wh: (u32, u32)) -> ();
