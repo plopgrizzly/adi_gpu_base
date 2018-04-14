@@ -36,8 +36,9 @@ pub trait Display: Sized {
 	///	end distance.
 	fn fog(&mut self, fog: Option<(f32, f32)>) -> ();
 
-	/// Update the `Display`.
-	fn update(&mut self) -> ();
+	/// Get input, if there's any.  If there's no input, update the
+	///`Display` and return `None`.
+	fn update(&mut self) -> Option<awi::Input>;
 
 	/// Move the camera.
 	///
@@ -112,9 +113,6 @@ pub trait Display: Sized {
 
 	/// Get the width and height of the window, as a tuple.
 	fn wh(&self) -> (u32, u32);
-
-	/// Get input, if there's any.
-	fn input(&mut self) -> Option<awi::Input>;
 }
 
 /// Trait for a `Texture`.
