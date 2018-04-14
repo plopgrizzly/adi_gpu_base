@@ -1,7 +1,6 @@
-// Aldaron's Device Interface / GPU / Base
-// Copyright (c) 2018 Jeron Lau <jeron.lau@plopgrizzly.com>
+// lib.rs -- Aldaron's Device Interface / GPU / Base
+// Copyright (c) 2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
 // Licensed under the MIT LICENSE
-// lib.rs
 
 //! This library is the base library for implementations of the adi_gpu api.
 //! If you would like to make your own implementation of the api, you can use
@@ -10,6 +9,8 @@
 extern crate afi;
 extern crate ami;
 extern crate awi;
+
+pub use awi::{ Input, Key, Click, Msg, Window, WindowConnection };
 
 use afi::*;
 use ami::Mat4;
@@ -38,7 +39,7 @@ pub trait Display: Sized {
 
 	/// Get input, if there's any.  If there's no input, update the
 	///`Display` and return `None`.
-	fn update(&mut self) -> Option<awi::Input>;
+	fn update(&mut self) -> Option<Input>;
 
 	/// Move the camera.
 	///
