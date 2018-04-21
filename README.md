@@ -1,4 +1,4 @@
-# adi_gpu_base 0.2.0
+# adi_gpu_base 0.3
 Trait for implementing the adi_gpu api.
 
 [Cargo](https://crates.io/crates/adi_gpu_base) /

@@ -6,11 +6,10 @@
 //! If you would like to make your own implementation of the api, you can use
 //! this library as a dependency.
 
-extern crate afi;
 extern crate ami;
 extern crate awi;
 
-pub use awi::{ Input, Key, Click, Msg, Window, WindowConnection };
+pub use awi::{ afi, Input, Key, Click, Msg, Window, WindowConnection };
 
 use afi::*;
 use ami::Mat4;

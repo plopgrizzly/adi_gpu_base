@@ -14,7 +14,7 @@
 
 [package]
 name = "adi_gpu_base"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>"
 ]
@@ -35,6 +35,5 @@ exclude = [
 ]
 
 [dependencies]
-afi = "^0.3.2"
 ami = "^0.6"
-awi = "^0.3"
+awi = "^0.4"
