@@ -9,10 +9,10 @@
 extern crate ami;
 extern crate awi;
 
-pub use awi::{ afi, Input, Key, Click, Msg, Window, WindowConnection };
-
-use afi::*;
-use ami::Mat4;
+pub use awi::{
+	afi, afi::Graphic, Input, Key, Click, Msg, Window, WindowConnection
+};
+pub use ami::{ Mat4 };
 
 /// A trait for a `Display`
 pub trait Display: Sized {
@@ -23,7 +23,7 @@ pub trait Display: Sized {
 	///
 	/// * `title`: The window title.
 	/// * `icon`: The window icon.
-	fn new(title: &str, icon: &afi::Graphic) -> Option<Self>;
+	fn new<G: AsRef<Graphic>>(title: &str, icon: G) -> Option<Self>;
 
 	/// Set the background color for the `Display`.
 	///
@@ -51,7 +51,7 @@ pub trait Display: Sized {
 	fn model(&mut self, vertices: &[f32], indices: &[u32]) -> Model;
 
 	/// Create a new `Texture` for this `Display`.
-	fn texture(&mut self, graphic: Graphic) -> Self::Texture;
+	fn texture<G: AsRef<Graphic>>(&mut self, graphic: G) -> Self::Texture;
 
 	/// Create a new `Gradient` for this `Display`.
 	fn gradient(&mut self, colors: &[f32]) -> Gradient;
