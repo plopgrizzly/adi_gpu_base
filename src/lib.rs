@@ -48,7 +48,7 @@ pub trait Display: Sized {
 		rotation: (f32, f32, f32)) -> ();
 
 	/// Create a new `Model` for this `Display`.
-	fn model(&mut self, vertices: &[f32], indices: &[u32]) -> Model;
+	fn model(&mut self, vertices: &[f32]) -> Model;
 
 	/// Create a new `Texture` for this `Display`.
 	fn texture<G: AsRef<Graphic>>(&mut self, graphic: G) -> Self::Texture;
