@@ -35,5 +35,5 @@ exclude = [
 ]
 
 [dependencies]
-ami = "^0.6"
+ami = { git = "https://github.com/PlopGrizzly/ami" } # "^0.6"
 awi = "^0.5"
