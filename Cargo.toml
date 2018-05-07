@@ -35,5 +35,5 @@ exclude = [
 ]
 
 [dependencies]
-ami = { git = "https://github.com/PlopGrizzly/ami.git" }
-awi = { git = "https://github.com/PlopGrizzly/awi.git" }
+ami = { path = "../ami.git" }
+awi = { path = "../awi.git" }
