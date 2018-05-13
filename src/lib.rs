@@ -23,7 +23,8 @@ pub trait Display: Sized {
 	///
 	/// * `title`: The window title.
 	/// * `icon`: The window icon.
-	fn new<G: AsRef<Graphic>>(title: &str, icon: G) -> Option<Self>;
+	fn new<G: AsRef<Graphic>>(title: &str, icon: G)
+		-> Result<Self, &'static str>;
 
 	/// Set the background color for the `Display`.
 	///
@@ -77,7 +78,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_texture(&mut self, model: &Model, transform: Mat4,
-		texture: Self::Texture, tc: TexCoords, blending: bool,
+		texture: &Self::Texture, tc: TexCoords, blending: bool,
 		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
@@ -85,7 +86,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_faded(&mut self, model: &Model, transform: Mat4,
-		texture: Self::Texture, tc: TexCoords, alpha: f32,
+		texture: &Self::Texture, tc: TexCoords, alpha: f32,
 		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
@@ -93,7 +94,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_tinted(&mut self, model: &Model, transform: Mat4,
-		texture: Self::Texture, tc: TexCoords, tint: [f32; 4],
+		texture: &Self::Texture, tc: TexCoords, tint: [f32; 4],
 		blending: bool, fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
@@ -101,7 +102,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_complex(&mut self, model: &Model, transform: Mat4,
-		texture: Self::Texture, tc: TexCoords,
+		texture: &Self::Texture, tc: TexCoords,
 		gradient: Gradient, blending: bool,
 		fog: bool, camera: bool) -> Shape;
 
