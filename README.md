@@ -1,4 +1,4 @@
-# adi_gpu_base 0.4
+# Aldaron's Device Interface / GPU / Base
 Trait for implementing the adi_gpu api.
 
 [Cargo](https://crates.io/crates/adi_gpu_base) /

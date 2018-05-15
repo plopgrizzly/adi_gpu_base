@@ -1,7 +1,6 @@
-// lib.rs -- Aldaron's Device Interface / GPU / Base
-// Copyright (c) 2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
-// Licensed under the MIT LICENSE
-
+// "adi_gpu_base" crate - Licensed under the MIT LICENSE
+//  * Copyright (c) 2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
+//
 //! This library is the base library for implementations of the adi_gpu api.
 //! If you would like to make your own implementation of the api, you can use
 //! this library as a dependency.
@@ -15,17 +14,7 @@ pub use awi::{
 pub use ami::{ Mat4 };
 
 /// A trait for a `Display`
-pub trait Display: Sized {
-	type Texture;
-
-	/// Create a new GPU-Accelerated `Display`.  If it can't be created,
-	/// return None.
-	///
-	/// * `title`: The window title.
-	/// * `icon`: The window icon.
-	fn new<G: AsRef<Graphic>>(title: &str, icon: G)
-		-> Result<Self, &'static str>;
-
+pub trait Display {
 	/// Set the background color for the `Display`.
 	///
 	/// * `color`: The background color for the display.
@@ -52,7 +41,7 @@ pub trait Display: Sized {
 	fn model(&mut self, vertices: &[f32]) -> Model;
 
 	/// Create a new `Texture` for this `Display`.
-	fn texture<G: AsRef<Graphic>>(&mut self, graphic: G) -> Self::Texture;
+	fn texture(&mut self, graphic: &Graphic) -> Texture;
 
 	/// Create a new `Gradient` for this `Display`.
 	fn gradient(&mut self, colors: &[f32]) -> Gradient;
@@ -61,7 +50,7 @@ pub trait Display: Sized {
 	fn texcoords(&mut self, texcoords: &[f32]) -> TexCoords;
 
 	/// Set the pixels for a `Texture`.
-	fn set_texture(&mut self, texture: &mut Self::Texture, pixels: &[u32])
+	fn set_texture(&mut self, texture: &mut Texture, pixels: &[u32])
 		-> ();
 
 	/// Create a new shape with a solid color.
@@ -78,7 +67,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_texture(&mut self, model: &Model, transform: Mat4,
-		texture: &Self::Texture, tc: TexCoords, blending: bool,
+		texture: &Texture, tc: TexCoords, blending: bool,
 		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
@@ -86,7 +75,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_faded(&mut self, model: &Model, transform: Mat4,
-		texture: &Self::Texture, tc: TexCoords, alpha: f32,
+		texture: &Texture, tc: TexCoords, alpha: f32,
 		fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
@@ -94,7 +83,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_tinted(&mut self, model: &Model, transform: Mat4,
-		texture: &Self::Texture, tc: TexCoords, tint: [f32; 4],
+		texture: &Texture, tc: TexCoords, tint: [f32; 4],
 		blending: bool, fog: bool, camera: bool) -> Shape;
 
 	/// Create a new shape shaded by a texture using texture coordinates
@@ -102,7 +91,7 @@ pub trait Display: Sized {
 	///
 	/// Texture Coordinates follow this format (X, Y, UNUSED(1.0), ALPHA)
 	fn shape_complex(&mut self, model: &Model, transform: Mat4,
-		texture: &Self::Texture, tc: TexCoords,
+		texture: &Texture, tc: TexCoords,
 		gradient: Gradient, blending: bool,
 		fog: bool, camera: bool) -> Shape;
 
@@ -113,12 +102,6 @@ pub trait Display: Sized {
 	fn resize(&mut self, wh: (u32, u32)) -> ();
 
 	/// Get the width and height of the window, as a tuple.
-	fn wh(&self) -> (u32, u32);
-}
-
-/// Trait for a `Texture`.
-pub trait Texture {
-	/// Get the width and height of this `Texture`.
 	fn wh(&self) -> (u32, u32);
 }
 
@@ -144,6 +127,9 @@ pub struct Gradient(pub usize); // TODO: unsafe
 /// A list of texture coordinates to be paired with vertices.
 #[derive(Copy, Clone)]
 pub struct TexCoords(pub usize); // TODO: unsafe
+
+/// A Texture
+pub struct Texture(pub usize); // TODO: unsafe
 
 /// Create a new shape
 pub fn new_shape(i: ShapeHandle) -> Shape {
