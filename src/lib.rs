@@ -9,9 +9,9 @@ extern crate ami;
 extern crate awi;
 
 pub use awi::{
-	afi, afi::Graphic, Input, Key, Click, Msg, Window, WindowConnection
+	afi, afi::Graphic, Input, Window, WindowConnection
 };
-pub use ami::{ Mat4 };
+pub use ami::{ Mat4, Vec3, Vec4, BBox };
 
 /// A trait for a `Display`
 pub trait Display {
@@ -38,7 +38,7 @@ pub trait Display {
 		rotation: (f32, f32, f32)) -> ();
 
 	/// Create a new `Model` for this `Display`.
-	fn model(&mut self, vertices: &[f32]) -> Model;
+	fn model(&mut self, vertices: &[f32], fans: Vec<(u32, u32)>) -> Model;
 
 	/// Create a new `Texture` for this `Display`.
 	fn texture(&mut self, graphic: &Graphic) -> Texture;
@@ -98,6 +98,9 @@ pub trait Display {
 	/// Transform the shape.
 	fn transform(&mut self, shape: &mut Shape, transform: Mat4);
 
+	/// Check for collision before translate.
+	fn collision(&self, shape: &Shape, force: &mut Vec3) -> Option<u32>;
+
 	/// Resize the display.
 	fn resize(&mut self, wh: (u32, u32)) -> ();
 
@@ -142,8 +145,8 @@ pub fn get_shape(s: &Shape) -> ShapeHandle {
 }
 
 /// Generate a projection matrix.
-pub fn projection(ratio: f32, fov: f32) -> Mat4 {
-	let scale = (fov * 0.5 * ::std::f32::consts::PI / 180.).tan().recip();
+pub fn projection(ratio: f64, fov: f64) -> Mat4 {
+	let scale = (fov * 0.5 * ::std::f64::consts::PI / 180.).tan().recip();
 	let yscale = scale * ratio;
 
 	Mat4([
@@ -152,4 +155,64 @@ pub fn projection(ratio: f32, fov: f32) -> Mat4 {
 		0.,	0.,	1.,	1.,
 		0.,	0.,	0., 	1.,
 	])
+}
+
+/// Turn model vertices into a bbox.
+pub fn vertices_to_bbox(vertices: &[f32], mat4: Mat4) -> BBox {
+	let mat = mat4.to_f32_array();
+
+	let mut xmin = vertices[0];
+	let mut ymin = vertices[1];
+	let mut zmin = vertices[2];
+	let mut xmax = vertices[0];
+	let mut ymax = vertices[1];
+	let mut zmax = vertices[2];
+
+	for i in 4..vertices.len() {
+		match i % 4 {
+			0 => {
+				let x = vertices[i];
+				let y = vertices[i + 1];
+				let z = vertices[i + 2];
+				let w = vertices[i + 3];
+				let x = mat[0]*x+mat[4]*y+mat[8]*z+mat[12]*w;
+
+				if x < xmin {
+					xmin = x;
+				} else if x > xmax {
+					xmax = x;
+				}
+			},
+			1 => {
+				let x = vertices[i - 1];
+				let y = vertices[i];
+				let z = vertices[i + 1];
+				let w = vertices[i + 2];
+				let y = mat[1]*x+mat[5]*y+mat[9]*z+mat[13]*w;
+
+				if y < ymin {
+					ymin = y;
+				} else if y > ymax {
+					ymax = y;
+				}
+			},
+			2 => {
+				let x = vertices[i - 2];
+				let y = vertices[i - 1];
+				let z = vertices[i];
+				let w = vertices[i + 1];
+				let z = mat[2]*x+mat[6]*y+mat[10]*z+mat[14]*w;
+
+				if z < zmin {
+					zmin = z;
+				} else if z > zmax {
+					zmax = z;
+				}
+			},
+			_ => { },
+		}
+	}
+
+	BBox::new(ami::Vec3::new(xmin, ymin, zmin),
+		ami::Vec3::new(xmax, ymax, zmax))
 }

@@ -34,5 +34,5 @@ exclude = [
 ]
 
 [dependencies]
-ami = "^0.7"
-awi = "^0.5"
+ami = "^0.8"
+awi = { path = "../awi" } # "^0.5"
