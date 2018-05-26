@@ -13,7 +13,7 @@
 
 [package]
 name = "adi_gpu_base"
-version = "0.5.0"
+version = "0.6.0"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>"
 ]
@@ -23,16 +23,16 @@ documentation = "https://docs.rs/adi_gpu_base"
 homepage = "http://plopgrizzly.com/adi_gpu_base"
 repository = "https://github.com/plopgrizzly/adi_gpu_base"
 
-readme = "README.md"
+readme = "readme.md"
 description = "Trait for implementing the adi_gpu api"
 keywords = ["graphics", "trait", "base", "adi_gpu", "api"]
 categories = ["hardware-support", "rendering", "template-engine"]
 
 exclude = [
-	"examples/*", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", ".gitignore",
-	"_config.yml", "ISSUE_TEMPLATE.md", "icon.png", "icon.ico"
+	"examples/*", "code_of_conduct.md", "contributing.md", ".gitignore",
+	"_config.yml", "issue_template.md", "icon.png", "icon.ico"
 ]
 
 [dependencies]
 ami = "^0.8"
-awi = { path = "../awi" } # "^0.5"
+awi = "^0.6"
