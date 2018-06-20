@@ -1,5 +1,4 @@
-# "adi_gpu_base" crate - Licensed under the MIT LICENSE
-#  * Copyright (c) 2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
+# "adi_gpu_base" - Aldaron's Device Interface / GPU / Base
 #                             _        _
 #                            /@\——————/@\
 # .———  .                   |   o    o   |     .————      .            .
@@ -10,29 +9,27 @@
 # |     |   ———   |       |                |    ————  |   | :——— :———  |   |
 #                 |        \              /                              __/
 #                           ¯————————————¯
+#
+# Copyright Jeron A. Lau 2018.
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# https://www.boost.org/LICENSE_1_0.txt)
 
 [package]
 name = "adi_gpu_base"
-version = "0.6.1"
+version = "0.7.0"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>"
 ]
-
-license = "MIT"
+license = "BSL-1.0"
 documentation = "https://docs.rs/adi_gpu_base"
-homepage = "http://plopgrizzly.com/adi_gpu_base"
+homepage = "https://plopgrizzly.com/adi_gpu_base"
 repository = "https://github.com/plopgrizzly/adi_gpu_base"
-
 readme = "readme.md"
 description = "Trait for implementing the adi_gpu api"
 keywords = ["graphics", "trait", "base", "adi_gpu", "api"]
 categories = ["hardware-support", "rendering", "template-engine"]
 
-exclude = [
-	"examples/*", "code_of_conduct.md", "contributing.md", ".gitignore",
-	"_config.yml", "issue_template.md", "icon.png", "icon.ico"
-]
-
 [dependencies]
-ami = "^0.8"
-awi = "^0.7"
+ami = "0.9"
+awi = "0.7"

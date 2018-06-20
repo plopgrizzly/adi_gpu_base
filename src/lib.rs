@@ -1,5 +1,9 @@
-// "adi_gpu_base" crate - Licensed under the MIT LICENSE
-//  * Copyright (c) 2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
+// "adi_gpu_base" - Aldaron's Device Interface / GPU / Base
+//
+// Copyright Jeron A. Lau 2018.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// https://www.boost.org/LICENSE_1_0.txt)
 //
 //! This library is the base library for implementations of the adi_gpu api.
 //! If you would like to make your own implementation of the api, you can use
@@ -8,10 +12,12 @@
 extern crate ami;
 extern crate awi;
 
+use std::cmp::Ordering;
+
 pub use awi::{
 	afi, afi::Graphic, Input, Window, WindowConnection
 };
-pub use ami::{ Mat4, Vec3, Vec4, BBox };
+pub use ami::{ Mat4, Vec3, Vec4, BBox, IDENTITY };
 
 /// A trait for a `Display`
 pub trait Display {
@@ -96,10 +102,7 @@ pub trait Display {
 		fog: bool, camera: bool) -> Shape;
 
 	/// Transform the shape.
-	fn transform(&mut self, shape: &mut Shape, transform: Mat4);
-
-	/// Check for collision before translate.
-	fn collision(&self, shape: &Shape, force: &mut Vec3) -> Option<u32>;
+	fn transform(&mut self, shape: &Shape, transform: Mat4);
 
 	/// Resize the display.
 	fn resize(&mut self, wh: (u32, u32)) -> ();
@@ -145,8 +148,8 @@ pub fn get_shape(s: &Shape) -> ShapeHandle {
 }
 
 /// Generate a projection matrix.
-pub fn projection(ratio: f64, fov: f64) -> Mat4 {
-	let scale = (fov * 0.5 * ::std::f64::consts::PI / 180.).tan().recip();
+pub fn projection(ratio: f32, fov: f32) -> Mat4 {
+	let scale = (fov * 0.5 * ::std::f32::consts::PI / 180.).tan().recip();
 	let yscale = scale * ratio;
 
 	Mat4([
@@ -157,62 +160,24 @@ pub fn projection(ratio: f64, fov: f64) -> Mat4 {
 	])
 }
 
-/// Turn model vertices into a bbox.
-pub fn vertices_to_bbox(vertices: &[f32], mat4: Mat4) -> BBox {
-	let mat = mat4.to_f32_array();
+pub trait Point {
+	fn point(&self) -> ami::Vec3;
+}
 
-	let mut xmin = vertices[0];
-	let mut ymin = vertices[1];
-	let mut zmin = vertices[2];
-	let mut xmax = vertices[0];
-	let mut ymax = vertices[1];
-	let mut zmax = vertices[2];
+/// Sort by distance.  nr => true if Near Sort, nr => false if Far Sort
+pub fn zsort<T: Point>(sorted: &mut Vec<u32>, points: &Vec<T>, nr: bool,
+	position: Vec3)
+{
+	sorted.sort_unstable_by(|a, b| {
+		let p1 = points[*a as usize].point() - position;
+		let p2 = points[*b as usize].point() - position;
 
-	for i in 4..vertices.len() {
-		match i % 4 {
-			0 => {
-				let x = vertices[i];
-				let y = vertices[i + 1];
-				let z = vertices[i + 2];
-				let w = vertices[i + 3];
-				let x = mat[0]*x+mat[4]*y+mat[8]*z+mat[12]*w;
-
-				if x < xmin {
-					xmin = x;
-				} else if x > xmax {
-					xmax = x;
-				}
-			},
-			1 => {
-				let x = vertices[i - 1];
-				let y = vertices[i];
-				let z = vertices[i + 1];
-				let w = vertices[i + 2];
-				let y = mat[1]*x+mat[5]*y+mat[9]*z+mat[13]*w;
-
-				if y < ymin {
-					ymin = y;
-				} else if y > ymax {
-					ymax = y;
-				}
-			},
-			2 => {
-				let x = vertices[i - 2];
-				let y = vertices[i - 1];
-				let z = vertices[i];
-				let w = vertices[i + 1];
-				let z = mat[2]*x+mat[6]*y+mat[10]*z+mat[14]*w;
-
-				if z < zmin {
-					zmin = z;
-				} else if z > zmax {
-					zmax = z;
-				}
-			},
-			_ => { },
+		if p1.mag() > p2.mag() {
+			if nr { Ordering::Greater } else { Ordering::Less }
+		} else if p1.mag() < p2.mag() {
+			if nr { Ordering::Less } else { Ordering::Greater }
+		} else {
+			Ordering::Equal
 		}
-	}
-
-	BBox::new(ami::Vec3::new(xmin, ymin, zmin),
-		ami::Vec3::new(xmax, ymax, zmax))
+	});
 }
