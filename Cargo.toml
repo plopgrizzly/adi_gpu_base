@@ -17,7 +17,7 @@
 
 [package]
 name = "adi_gpu_base"
-version = "0.7.0"
+version = "0.8.0"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>"
 ]
@@ -31,5 +31,6 @@ keywords = ["graphics", "trait", "base", "adi_gpu", "api"]
 categories = ["hardware-support", "rendering", "template-engine"]
 
 [dependencies]
-ami = "0.9"
+euler = "0.3"
 awi = "0.7"
+cgmath = "0.15" # Version depended on by euler

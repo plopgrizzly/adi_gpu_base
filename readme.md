@@ -11,6 +11,9 @@ Trait for implementing the adi_gpu api.
 * WIP
 
 ## Change Log
+### 0.8
+* Now depends on Euler for Vec3 and Mat4
+
 ### 0.7
 * Moved `collision` function, and other `Octree`-related code to another crate.
 
