@@ -150,9 +150,11 @@ pub fn get_shape(s: &Shape) -> ShapeHandle {
 
 /// Generate a projection matrix.
 pub fn projection(ratiox: f32, fovy: f32) -> Transform {
-	// TODO: euler crate have this at some point hopefully?
 	let a: [[f32;4];4] = cgmath::perspective(
 		cgmath::Rad(fovy),
+	// TODO: euler crate have this at some point hopefully?
+//	let a: [[f32;4];4] = euler::Mat4::finite_perspective_projection(
+//		fovy,
 		ratiox,
 		0.1, // Near
 		100.0, // Far

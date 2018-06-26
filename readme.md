@@ -11,6 +11,9 @@ Trait for implementing the adi_gpu api.
 * WIP
 
 ## Change Log
+### 0.9
+* Update to euler 0.4
+
 ### 0.8
 * Now depends on Euler for Vec3 and Mat4
 
