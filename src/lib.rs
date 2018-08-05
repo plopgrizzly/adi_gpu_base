@@ -16,7 +16,7 @@ extern crate awi;
 use std::cmp::Ordering;
 
 pub use awi::{
-	afi, afi::Graphic, Input, Window, WindowConnection
+	afi, afi::VFrame, Input, Window, WindowConnection
 };
 pub use euler::*;
 pub use std::f32::consts::PI;
@@ -48,7 +48,7 @@ pub trait Display {
 	fn model(&mut self, vertices: &[f32], fans: Vec<(u32, u32)>) -> Model;
 
 	/// Create a new `Texture` for this `Display`.
-	fn texture(&mut self, graphic: &Graphic) -> Texture;
+	fn texture(&mut self, wh: (u16,u16), graphic: &VFrame) -> Texture;
 
 	/// Create a new `Gradient` for this `Display`.
 	fn gradient(&mut self, colors: &[f32]) -> Gradient;
@@ -57,8 +57,8 @@ pub trait Display {
 	fn texcoords(&mut self, texcoords: &[f32]) -> TexCoords;
 
 	/// Set the pixels for a `Texture`.
-	fn set_texture(&mut self, texture: &mut Texture, pixels: &[u32])
-		-> ();
+	fn set_texture(&mut self, texture: &mut Texture, wh: (u16,u16),
+		graphic: &VFrame) -> ();
 
 	/// Create a new shape with a solid color.
 	fn shape_solid(&mut self, model: &Model, transform: Transform,
@@ -102,14 +102,17 @@ pub trait Display {
 		gradient: Gradient, blending: bool,
 		fog: bool, camera: bool) -> Shape;
 
+	/// Drop a shape (don't draw it anymore).
+	fn drop_shape(&mut self, shape: &Shape);
+
 	/// Transform the shape.
 	fn transform(&mut self, shape: &Shape, transform: Transform);
 
 	/// Resize the display.
-	fn resize(&mut self, wh: (u32, u32)) -> ();
+	fn resize(&mut self, wh: (u16, u16)) -> ();
 
 	/// Get the width and height of the window, as a tuple.
-	fn wh(&self) -> (u32, u32);
+	fn wh(&self) -> (u16, u16);
 }
 
 /// Handle for shape.
@@ -136,7 +139,7 @@ pub struct Gradient(pub usize); // TODO: unsafe
 pub struct TexCoords(pub usize); // TODO: unsafe
 
 /// A Texture
-pub struct Texture(pub usize); // TODO: unsafe
+pub struct Texture(pub usize, pub u16, pub u16); // TODO: unsafe
 
 /// Create a new shape
 pub fn new_shape(i: ShapeHandle) -> Shape {
