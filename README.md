@@ -24,5 +24,3 @@ This project is part of [ADI](https://crates.io/crates/adi).
 
 ### 0.6
 * Added `collision` function for collison detection.
-
-## Developed by [Plop Grizzly](http://plopgrizzly.com)
