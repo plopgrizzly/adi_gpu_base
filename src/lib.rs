@@ -1,10 +1,8 @@
-// "adi_gpu_base" - Aldaron's Device Interface / GPU / Base
-//
 // Copyright Jeron A. Lau 2018.
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Dual-licensed under either the MIT License or the Boost Software License,
+// Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
-//
+
 //! This library is the base library for implementations of the adi_gpu api.
 //! If you would like to make your own implementation of the api, you can use
 //! this library as a dependency.

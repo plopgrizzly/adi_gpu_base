@@ -1,11 +1,13 @@
+[![Plop Grizzly](https://plopgrizzly.com/images/logo-bar.png)](https://plopgrizzly.com)
+
 # [Aldaron's Device Interface / GPU / Base](https://crates.io/crates/adi_gpu_base)
 Trait for implementing the adi_gpu api.
+
+This project is part of [ADI](https://crates.io/crates/adi).
 
 ## Features
 * Provide trait for the adi_gpu api
 * Helper functions for implementations.
-
-## [Contributing](http://plopgrizzly.com/contributing/en#contributing)
 
 ## Roadmap to 1.0 (Future Features)
 * WIP
