@@ -31,5 +31,5 @@ keywords = ["graphics", "trait", "base", "adi_gpu", "api"]
 categories = ["hardware-support", "rendering", "template-engine"]
 
 [dependencies]
-ami = "0.9"
+ami = "0.13"
 awi = "0.7"
