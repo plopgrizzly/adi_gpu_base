@@ -32,4 +32,4 @@ categories = ["hardware-support", "rendering", "template-engine"]
 
 [dependencies]
 ami = "0.13"
-awi = "0.7"
+awi = "0.8"
